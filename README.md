@@ -8,4 +8,4 @@ Aprender TypeScript para melhor abordagem no React.
 
 ### Img
 
-[!img](src/imgs/img-screenshot.png)
+<img src="src/imgs/img-screenshot.png" alt="cap01" width="500"/>
