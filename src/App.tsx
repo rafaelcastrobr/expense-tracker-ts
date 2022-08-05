@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import * as C from './App.styles';
 import { InfoArea } from './components/InfoArea/InfoArea';
+import { InputArea } from './components/InputArea/InputArea';
 import { TableArea } from './components/TableArea/TableArea';
+import { categories } from './data/categories';
 import { items } from './data/items';
 import { filterListByMonth, getCurrentMonth } from './helpers/dateFilter';
 import { Item } from './types/Item';
@@ -11,13 +13,37 @@ const App = () => {
   const [list, setList] = useState(items);
   const [filteredList, setFilteredList] = useState<Item[]>([]);
   const [currentMonth, setcurrentMonth] = useState(getCurrentMonth());
+  const [income, setIncome] = useState(0);
+  const [expense, setExpense] = useState(0);
 
   useEffect(() => {
     setFilteredList(filterListByMonth(list, currentMonth));
   }, [list, currentMonth])
 
+  useEffect(() => {
+    let incomeCount = 0
+    let expenseCount = 0;
+
+    for(let i in filteredList) {
+      if(categories[filteredList[i].category].expense) {
+        expenseCount += filteredList[i].value;
+      } else {
+        incomeCount += filteredList[i].value;
+      }
+    }
+
+    setIncome(incomeCount)
+    setExpense(expenseCount)
+  }, [filteredList])
+
   const handleMonthChange = (newMonth: string) => {
     setcurrentMonth(newMonth);
+  }
+
+  const handleAddItem = (item: Item) => {
+    let newList = [...list];
+    newList.push(item)
+    setList(newList);
   }
 
   return (
@@ -32,13 +58,13 @@ const App = () => {
         <InfoArea
         currentMonth={currentMonth}
         onMonthChange={handleMonthChange}
+        income={income}
+        expense={expense}
         />
 
 
-        {/* inserçao*/}
+        <InputArea onAdd={handleAddItem}/>
 
-
-        {/* itens*/}
         <TableArea list={filteredList} />
 
       </C.Body>
